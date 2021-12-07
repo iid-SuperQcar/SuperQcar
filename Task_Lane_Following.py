@@ -51,8 +51,7 @@ try:
 		myCam.read()
 
 		# Crop out a piece of the RGB to improve performance
-		# cropped_rgb = myCam.image_data[524:674, 0:820]
-		cropped_rgb = myCam.image_data[224:974, 0:820]
+		cropped_rgb = myCam.image_data[524:674, 0:820]
 
 		# Convert to HSV and then threshold it for yellow
 		hsv_buf = cv2.cvtColor(cropped_rgb, cv2.COLOR_BGR2HSV)
@@ -63,7 +62,18 @@ try:
 		# Display the RGB (Original) as well as the Binary in 1/4th resolution for speed
 		# cv2.imshow('My RGB image', cv2.resize(myCam.image_data, (410, 205) ) )
 		# cv2.imshow('My RGB image', cropped_rgb )
+
+		# --------------------------------
+		# original code
+		# cv2.imshow('My Binary image', cv2.resize(binary, (410, 75) ))
+		# --------------------------------
+
+		# --------------------------------
+		# new code
+		show = myCam.image_data.copy()
 		cv2.imshow('My Binary image', cv2.resize(binary, (410, 75) ))
+		cv2.imshow('My Original image', show)
+		# --------------------------------
 
 		# Find slope and intercept of linear fit from the binary image
 		slope, intercept = find_slope_intercept_from_binary(binary)
