@@ -71,15 +71,16 @@ try:
 		# --------------------------------
 		# new code
 		show = myCam.image_data.copy()
+		
 		cv2.imshow('My Binary image', cv2.resize(binary, (410, 75) ))
-		cv2.imshow('My Original image', show)
+		# cv2.imshow('My Original image', show)
 		# --------------------------------
 
 		# Find slope and intercept of linear fit from the binary image
 		slope, intercept = find_slope_intercept_from_binary(binary)
 
 		# steering from slope and intercept
-		raw_steering = 1.5*(slope - 0.3419) + (1/150)*(intercept+5)
+		raw_steering = 1.5*(slope - 0.3419) + (1/150)*(intercept+3.5)
 		interval = start - t
 		
 		if interval > 0.5:
@@ -94,11 +95,25 @@ try:
 		# Write steering to qcar
 		new = gpad.read()
 
-		mtr_cmd = control_from_gamepad(gpad.LB, gpad.RT, gpad.LLA, gpad.A)
+		# mtr_cmd = control_from_gamepad(gpad.LB, gpad.RT, gpad.LLA, gpad.A)
+
+		# set speed as a constant
+		# mtr_cmd = control_from_gamepad(gpad.LB, 0.3, gpad.LLA, gpad.A)
+
 		if gpad.X == 1:
 			if math.isnan(steering):
+				mtr_cmd = control_from_gamepad(gpad.LB, 0.3, gpad.LLA, gpad.A)
 				mtr_cmd[1] = 0
 			else:
+				mtr_cmd = control_from_gamepad(gpad.LB, 0.3, gpad.LLA, gpad.A)
+				mtr_cmd[1] = steering
+			mtr_cmd[0] = mtr_cmd[0]*np.cos(steering)
+		else:
+			if math.isnan(steering):
+				mtr_cmd = control_from_gamepad(gpad.LB, gpad.RT, gpad.LLA, gpad.A)
+				mtr_cmd[1] = 0
+			else:
+				mtr_cmd = control_from_gamepad(gpad.LB, gpad.RT, gpad.LLA, gpad.A)
 				mtr_cmd[1] = steering
 			mtr_cmd[0] = mtr_cmd[0]*np.cos(steering)
 		myCar.write_mtrs(mtr_cmd)
